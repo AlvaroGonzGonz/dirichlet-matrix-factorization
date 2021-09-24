@@ -1,12 +1,12 @@
-package com.github.ferortega.bemf.experiment;
+package experiment;
 
-import com.github.ferortega.bemf.recommender.BeMF;
+import recommender.BeMF;
 import es.upm.etsisi.cf4j.data.DataModel;
 import es.upm.etsisi.cf4j.qualityMeasure.prediction.MAE;
-import es.upm.etsisi.cf4j.recommender.matrixFactorization.*;
+import es.upm.etsisi.cf4j.recommender.matrixFactorization.PMF;
+import es.upm.etsisi.cf4j.util.Range;
 import es.upm.etsisi.cf4j.util.optimization.GridSearch;
 import es.upm.etsisi.cf4j.util.optimization.ParamsGrid;
-import es.upm.etsisi.cf4j.util.Range;
 
 import java.io.IOException;
 

@@ -1,19 +1,19 @@
-package com.github.ferortega.bemf.experiment;
+package experiment;
 
-import com.github.ferortega.bemf.qualityMeasure.Precision;
-import com.github.ferortega.bemf.qualityMeasure.Recall;
-import com.github.ferortega.bemf.qualityMeasure.ReliablePrecision;
-import com.github.ferortega.bemf.qualityMeasure.ReliableRecall;
-import com.github.ferortega.bemf.recommender.BeMF;
-import com.github.ferortega.bemf.recommender.DirMF;
+import qualityMeasure.Precision;
+import qualityMeasure.Recall;
+import qualityMeasure.ReliablePrecision;
+import qualityMeasure.ReliableRecall;
+import recommender.BeMF;
+import recommender.DirMF;
 import es.upm.etsisi.cf4j.data.DataModel;
+import es.upm.etsisi.cf4j.recommender.matrixFactorization.PMF;
 import es.upm.etsisi.cf4j.util.plot.LinePlot;
 import es.upm.etsisi.cf4j.util.plot.PlotSettings;
-import es.upm.etsisi.cf4j.recommender.matrixFactorization.PMF;
 
 import java.io.IOException;
 
-import static com.github.ferortega.bemf.experiment.Settings.*;
+import static experiment.Settings.*;
 
 public class QualityOfRecommendations {
 

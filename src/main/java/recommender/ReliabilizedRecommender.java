@@ -1,4 +1,4 @@
-package com.github.ferortega.bemf.recommender;
+package recommender;
 
 import es.upm.etsisi.cf4j.data.Item;
 import es.upm.etsisi.cf4j.data.User;

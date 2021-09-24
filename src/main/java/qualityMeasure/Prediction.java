@@ -1,6 +1,6 @@
-package com.github.ferortega.bemf.qualityMeasure;
+package qualityMeasure;
 
-import com.github.ferortega.bemf.recommender.PredictionReliabilityRecommender;
+import recommender.PredictionReliabilityRecommender;
 import es.upm.etsisi.cf4j.data.DataModel;
 import es.upm.etsisi.cf4j.data.TestUser;
 import es.upm.etsisi.cf4j.recommender.Recommender;

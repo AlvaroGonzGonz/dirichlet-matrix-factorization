@@ -1,19 +1,19 @@
-package com.github.ferortega.bemf.qualityMeasure;
+package qualityMeasure;
 
-import com.github.ferortega.bemf.recommender.RecommendationReliabilityRecommender;
+import recommender.RecommendationReliabilityRecommender;
 import es.upm.etsisi.cf4j.data.TestItem;
 import es.upm.etsisi.cf4j.data.TestUser;
 import es.upm.etsisi.cf4j.qualityMeasure.QualityMeasure;
 import es.upm.etsisi.cf4j.recommender.Recommender;
 import es.upm.etsisi.cf4j.util.Search;
 
-public class ReliablePrecision extends QualityMeasure {
+public class ReliableRecall extends QualityMeasure {
 
     private int numberOfRecommendations;
     private double ratingThreshold;
     private double reliabilityThreshold;
 
-    public ReliablePrecision(RecommendationReliabilityRecommender recommender, int numberOfRecommendations, double reliabilityThreshold, double ratingThreshold) {
+    public ReliableRecall(RecommendationReliabilityRecommender recommender, int numberOfRecommendations, double reliabilityThreshold, double ratingThreshold) {
         super((Recommender) recommender);
         this.numberOfRecommendations = numberOfRecommendations;
         this.ratingThreshold = ratingThreshold;
@@ -39,8 +39,7 @@ public class ReliablePrecision extends QualityMeasure {
 
         int [] recommendations = Search.findTopN(recomendationReliabilities, this.numberOfRecommendations);
 
-        int recommendedAndRelevant = 0, recommended = 0;
-
+        int recommendedAndRelevant = 0;
         for (int pos : recommendations) {
             if (pos == -1) break;
 
@@ -48,10 +47,16 @@ public class ReliablePrecision extends QualityMeasure {
             if (rating >= this.ratingThreshold) {
                 recommendedAndRelevant++;
             }
-
-            recommended++;
         }
 
-        return (double) recommendedAndRelevant / (double) recommended;
+        int relevant = 0;
+        for (int i = 0; i < testUser.getNumberOfTestRatings(); i++){
+            double rating = testUser.getTestRatingAt(i);
+            if (rating >= this.ratingThreshold) {
+                relevant++;
+            }
+        }
+
+        return (double) recommendedAndRelevant / (double) relevant;
     }
 }

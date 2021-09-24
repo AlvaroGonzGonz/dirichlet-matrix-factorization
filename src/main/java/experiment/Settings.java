@@ -1,4 +1,4 @@
-package com.github.ferortega.bemf.experiment;
+package experiment;
 
 import es.upm.etsisi.cf4j.data.BenchmarkDataModels;
 import es.upm.etsisi.cf4j.data.DataModel;

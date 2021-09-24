@@ -1,6 +1,6 @@
-package com.github.ferortega.bemf.recommender;
+package recommender;
 
-import com.github.ferortega.bemf.experiment.Settings;
+import experiment.Settings;
 import es.upm.etsisi.cf4j.data.DataModel;
 import es.upm.etsisi.cf4j.data.Item;
 import es.upm.etsisi.cf4j.data.User;
@@ -8,13 +8,13 @@ import es.upm.etsisi.cf4j.recommender.Recommender;
 import es.upm.etsisi.cf4j.util.Maths;
 import es.upm.etsisi.cf4j.util.process.Parallelizer;
 import es.upm.etsisi.cf4j.util.process.Partible;
-import org.apache.commons.math3.special.Gamma;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
 
-public class DirMF extends Recommender implements PredictionReliabilityRecommender, RecommendationReliabilityRecommender {
+public class BeMF extends Recommender implements PredictionReliabilityRecommender, RecommendationReliabilityRecommender {
+
     private int numFactors;
 
     private int numIters;
@@ -23,54 +23,50 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
 
     private double regularization;
 
-    private double beta;
-
     private double[] ratings;
 
-    private double[][][] P;
+    private double[][][] U;
 
-    private double[][][] Q;
+    private double[][][] V;
 
-    public DirMF(DataModel datamodel, Map<String, Object> params) {
+    public BeMF(DataModel datamodel, Map<String, Object> params) {
         this(
                 datamodel,
                 (int) params.get("numFactors"),
                 (int) params.get("numIters"),
                 (double) params.get("learningRate"),
                 (double) params.get("regularization"),
-                (double) params.get("beta"),
                 (double[]) params.get("ratings"),
                 params.containsKey("seed") ? (long) params.get("seed") : System.currentTimeMillis()
         );
     }
 
-    public DirMF(DataModel datamodel, int numFactors, int numIters, double learningRate, double regularization, double beta, double[] ratings, long seed) {
+    public BeMF(DataModel datamodel, int numFactors, int numIters, double learningRate, double regularization, double[] ratings, long seed) {
         super(datamodel);
 
         this.numFactors = numFactors;
         this.numIters = numIters;
         this.learningRate = learningRate;
         this.regularization = regularization;
-        this.beta = beta;
         this.ratings = ratings;
 
         Random rand = new Random(seed);
 
-        this.P = new double[ratings.length][datamodel.getNumberOfUsers()][numFactors];
+        this.U = new double[ratings.length][datamodel.getNumberOfUsers()][numFactors];
         for (int r = 0; r < ratings.length; r++) {
             for (int u = 0; u < datamodel.getNumberOfUsers(); u++) {
                 for (int k = 0; k < numFactors; k++) {
-                    this.P[r][u][k] = rand.nextDouble();
+                    this.U[r][u][k] = rand.nextDouble();
                 }
             }
         }
 
 
-        this.Q = new double[ratings.length][datamodel.getNumberOfItems()][numFactors];
+        this.V = new double[ratings.length][datamodel.getNumberOfItems()][numFactors];
         for (int r = 0; r < ratings.length; r++) {
             for (int i = 0; i < datamodel.getNumberOfItems(); i++) {
                 for (int k = 0; k < numFactors; k++) {
-                    this.Q[r][i][k] = rand.nextDouble();
+                    this.V[r][i][k] = rand.nextDouble();
                 }
             }
         }
@@ -88,10 +84,6 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
         return regularization;
     }
 
-    public double getBeta() {
-        return beta;
-    }
-
     public double[] getRatings() {
         return ratings;
     }
@@ -101,8 +93,10 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
         System.out.println("\nFitting " + this.toString());
 
         for (int iter = 1; iter <= this.numIters; iter++) {
-            Parallelizer.exec(datamodel.getUsers(), new UpdateUsersFactors());
-            Parallelizer.exec(datamodel.getItems(), new UpdateItemsFactors());
+            for (int r = 0; r < this.ratings.length; r++) {
+                Parallelizer.exec(this.datamodel.getUsers(), new UpdateUsersFactors(U[r], V[r], ratings[r]));
+                Parallelizer.exec(this.datamodel.getItems(), new UpdateItemsFactors(U[r], V[r], ratings[r]));
+            }
 
             if ((iter % 10) == 0) System.out.print(".");
             if ((iter % 100) == 0) System.out.println(iter + " iterations");
@@ -126,11 +120,11 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
     }
 
     private double getProbability(int userIndex, int itemIndex, int r) {
-        double dot = Maths.logistic(Maths.dotProduct(this.P[r][userIndex], this.Q[r][itemIndex]));
+        double dot = Maths.logistic(Maths.dotProduct(this.U[r][userIndex], this.V[r][itemIndex]));
 
         double sum = 0;
         for (int i = 0; i < this.ratings.length; i++) {
-            sum += Maths.logistic(Maths.dotProduct(this.P[i][userIndex], this.Q[i][itemIndex]));
+            sum += Maths.logistic(Maths.dotProduct(this.U[i][userIndex], this.V[i][itemIndex]));
         }
 
         return dot / sum;
@@ -148,19 +142,6 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
         return this.getProbability(userIndex, itemIndex, r);
     }
 
-    public double[] getProbabilityDistribution(int userIndex, int itemIndex) {
-        return this.getProbabilityDistribution(this.P[userIndex], this.Q[itemIndex]);
-    }
-
-    public double[] getProbabilityDistribution(double[][] pu, double[][] qi) {
-        double[] probs = new double[this.ratings.length];
-        for (int r = 0; r < probs.length; r++) {
-            double dot = Maths.logistic(Maths.dotProduct(pu[r], qi[r]));
-            probs[r] = dot;
-        }
-        return probs;
-    }
-//----------------------------------------
     @Override
     public double getRecommendationReliability(int userIndex, int itemIndex) {
         double reliability = 0;
@@ -173,18 +154,9 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
         return reliability;
     }
 
-    public double[][] getUserParams(int userIndex) {
-        return this.P[userIndex];
-    }
-
-    public double[][] getItemParams(int itemIndex) {
-        return this.Q[itemIndex];
-    }
-
-
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("DirMF(")
+        StringBuilder str = new StringBuilder("BeMF(")
                 .append("numFactors=").append(this.numFactors)
                 .append("; ")
                 .append("numIters=").append(this.numIters)
@@ -192,8 +164,6 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
                 .append("learningRate=").append(this.learningRate)
                 .append("; ")
                 .append("regularization=").append(this.regularization)
-                .append("; ")
-                .append("beta=").append(this.beta)
                 .append("; ")
                 .append("ratings=").append(Arrays.toString(this.ratings))
                 .append(")");
@@ -205,6 +175,18 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
      */
     private class UpdateUsersFactors implements Partible<User> {
 
+        private double rating;
+
+        private double[][] U;
+
+        private double[][] V;
+
+        public UpdateUsersFactors(double[][] U, double[][] V, double rating) {
+            this.U = U;
+            this.V = V;
+            this.rating = rating;
+        }
+
         @Override
         public void beforeRun() { }
 
@@ -212,29 +194,25 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
         public void run(User user) {
             int userIndex = user.getUserIndex();
 
+            double[] gradient = new double[numFactors];
+
             for (int pos = 0; pos < user.getNumberOfRatings(); pos++) {
+                boolean oneHot = user.getRatingAt(pos) == rating;
+
                 int itemIndex = user.getItemAt(pos);
+                double dot = Maths.dotProduct(U[userIndex], V[itemIndex]);
 
-                double sum = 0;
-                for (int s = 0; s < ratings.length; s++) {
-                    double dot = Maths.dotProduct(P[s][userIndex], Q[s][itemIndex]);
-                    sum += Maths.logistic(dot);
-                }
-
-                for (int s = 0; s < ratings.length; s++) {
-                    double r_ui = user.getRatingAt(pos) == ratings[s]
-                            ? Math.exp(beta * user.getRatingAt(pos)) / (ratings.length + Math.exp(beta * user.getRatingAt(pos)))
-                            : 1 / (ratings.length + Math.exp(beta * user.getRatingAt(pos)));
-
-                    double dot = Maths.dotProduct(P[s][userIndex], Q[s][itemIndex]);
-                    double logit = Maths.logistic(dot);
-
-                    for (int k = 0; k < numFactors; k++) {
-                        //double gradient = Q[itemIndex][s][k] * logit * (1 - logit) * (Math.log(r_ui) - Gamma.digamma(logit) + Gamma.digamma(sum));
-                        double gradient = Q[s][itemIndex][k] * logit * (1 - logit) * (Gamma.digamma(logit) - Gamma.digamma(sum) - Math.log(r_ui));
-                        P[s][userIndex][k] -= learningRate * (gradient + regularization * P[s][userIndex][k]);
+                for (int k = 0; k < numFactors; k++) {
+                    if (oneHot) {
+                        gradient[k] += (1 - Maths.logistic(dot)) * V[itemIndex][k];
+                    } else {
+                        gradient[k] -= Maths.logistic(dot) * V[itemIndex][k];
                     }
                 }
+            }
+
+            for (int k = 0; k < numFactors; k++) {
+                U[userIndex][k] += learningRate * (gradient[k] - regularization * U[userIndex][k]);
             }
         }
 
@@ -247,6 +225,18 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
      */
     private class UpdateItemsFactors implements Partible<Item> {
 
+        private double rating;
+
+        private double[][] U;
+
+        private double[][] V;
+
+        public UpdateItemsFactors(double[][] U, double[][] V, double rating) {
+            this.U = U;
+            this.V = V;
+            this.rating = rating;
+        }
+
         @Override
         public void beforeRun() { }
 
@@ -254,29 +244,25 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
         public void run(Item item) {
             int itemIndex = item.getItemIndex();
 
+            double[] gradient = new double[numFactors];
+
             for (int pos = 0; pos < item.getNumberOfRatings(); pos++) {
+                boolean oneHot = item.getRatingAt(pos) == rating;
+
                 int userIndex = item.getUserAt(pos);
+                double dot = Maths.dotProduct(U[userIndex], V[itemIndex]);
 
-                double sum = 0;
-                for (int s = 0; s < ratings.length; s++) {
-                    double dot = Maths.dotProduct(P[s][userIndex], Q[s][itemIndex]);
-                    sum += Maths.logistic(dot);
-                }
-
-                for (int s = 0; s < ratings.length; s++) {
-                    double r_ui = item.getRatingAt(pos) == ratings[s]
-                            ? Math.exp(beta * item.getRatingAt(pos)) / (ratings.length + Math.exp(beta * item.getRatingAt(pos)))
-                            : 1 / (ratings.length + Math.exp(beta * item.getRatingAt(pos)));
-
-                    double dot = Maths.dotProduct(P[s][userIndex], Q[s][itemIndex]);
-                    double logit = Maths.logistic(dot);
-
-                    for (int k = 0; k < numFactors; k++) {
-                        //double gradient = P[userIndex][s][k] * logit * (1 - logit) * (Math.log(r_ui) - Gamma.digamma(logit) + Gamma.digamma(sum));
-                        double gradient = P[s][userIndex][k] * logit * (1 - logit) * (Gamma.digamma(logit) - Gamma.digamma(sum) - Math.log(r_ui));
-                        Q[s][itemIndex][k] -= learningRate * (gradient + regularization * Q[s][itemIndex][k]);
+                for (int k = 0; k < numFactors; k++) {
+                    if (oneHot) {
+                        gradient[k] += (1 - Maths.logistic(dot)) * U[userIndex][k];
+                    } else {
+                        gradient[k] -= Maths.logistic(dot) * U[userIndex][k];
                     }
                 }
+            }
+
+            for (int k = 0; k < numFactors; k++) {
+                V[itemIndex][k] += learningRate * (gradient[k] - regularization * V[itemIndex][k]);
             }
         }
 

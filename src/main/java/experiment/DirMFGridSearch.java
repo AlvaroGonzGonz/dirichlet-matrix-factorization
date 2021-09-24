@@ -1,6 +1,6 @@
-package com.github.ferortega.bemf.experiment;
+package experiment;
 
-import com.github.ferortega.bemf.recommender.DirMF;
+import recommender.DirMF;
 import es.upm.etsisi.cf4j.data.DataModel;
 import es.upm.etsisi.cf4j.qualityMeasure.prediction.MAE;
 import es.upm.etsisi.cf4j.util.Range;
