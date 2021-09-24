@@ -157,6 +157,7 @@ MAE scores on development set:
 0.996545 for {numIters=75, seed=43, ratings=[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0], learningRate=0.004, regularization=0.060000000000000005, numFactors=4}
 ```
 
+
 ### PMF
 
 ```
