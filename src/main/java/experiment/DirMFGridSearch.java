@@ -21,14 +21,14 @@ public class DirMFGridSearch {
         GridSearch gridSearch;
 
 
-        // BeMF Recommender
+        // DirMF Recommender
 
         paramsGrid = new ParamsGrid();
 
-        paramsGrid.addParam("numFactors", new int[]{2, 4, 6, 8});
-        paramsGrid.addParam("learningRate", Range.ofDoubles(0.002, 0.002, 10));
-        paramsGrid.addParam("regularization", Range.ofDoubles(0.01, 0.01, 20));
-        paramsGrid.addParam("beta", Range.ofDoubles(1,0.5, 5));
+        paramsGrid.addParam("numFactors", new int[]{2,4,6,8});
+        paramsGrid.addParam("learningRate", Range.ofDoubles(0.01, 0.01, 9));
+        paramsGrid.addParam("regularization", Range.ofDoubles(0.005, 0.005, 9));
+        paramsGrid.addParam("beta", Range.ofDoubles(1.0,0.5, 1));
         paramsGrid.addParam("numIters", new int[]{50, 75, 100});
 
         paramsGrid.addFixedParam("ratings", Settings.RATINGS);

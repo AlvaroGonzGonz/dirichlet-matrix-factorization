@@ -29,10 +29,20 @@ public class Settings {
     public static Map<String, Object> BEMF_PARAMS;
     public static Map<String, Object> PMF_PARAMS;
 
+    //Neural Baselines
+    public static double DEEPMF_MAE;
+    public static double DEEPMF_COVERAGE;
+    public static double DEEPMF_PRECISION;
+    public static double DEEPMF_RECALL;
+
+    public static double NCF_MAE;
+    public static double NCF_COVERAGE;
+    public static double NCF_PRECISION;
+    public static double NCF_RECALL;
 
 
     // Uncomment this for MovieLens
-    static {
+/*    static {
         try {
             DATAMODEL = BenchmarkDataModels.MovieLens1M();
             RATINGS = new double[]{1.0, 2.0, 3.0, 4.0, 5.0};
@@ -42,10 +52,10 @@ public class Settings {
 
             DIRMF_PARAMS = Map.of(
                     "numFactors", 6,
-                    "numIters", 100,
-                    "learningRate", 0.01,
+                    "numIters", 50,
+                    "learningRate", 0.022,
                     "regularization", 0.01,
-                    "beta", 2d,
+                    "beta", 1d,
                     "ratings", RATINGS,
                     "seed", RANDOM_SEED
             );
@@ -67,136 +77,174 @@ public class Settings {
                     "seed", RANDOM_SEED
             );
 
+            DEEPMF_MAE = 0.7036164465208747;
+            DEEPMF_COVERAGE = 1.0;
+            DEEPMF_PRECISION = 0.7542625340685808;
+            DEEPMF_RECALL = 0.3150217704279688;
+
+            NCF_MAE = 0.7126104259069086;
+            NCF_COVERAGE = 1.0;
+            NCF_PRECISION = 0.7695750595351295;
+            NCF_RECALL = 0.2840877406383902;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
+
+    // Uncomment this for FilmTrust
+    static {
+        try {
+            DATAMODEL = BenchmarkDataModels.FilmTrust();
+            RATINGS = new double[]{0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0};
+            LIKE_THRESHOLD = 3.5;
+
+            EXPORT_PREFIX = "filmtrust";
+
+            DIRMF_PARAMS = Map.of(
+                    "numFactors", 8,
+                    "numIters", 100,
+                    "learningRate", 0.09,
+                    "regularization", 0.015,
+                    "beta", 1d,
+                    "ratings", RATINGS,
+                    "seed", RANDOM_SEED
+                    );
+
+            BEMF_PARAMS = Map.of(
+                    "numFactors", 2,
+                    "numIters", 75,
+                    "learningRate", 0.02,
+                    "regularization", 0.06,
+                    "ratings", RATINGS,
+                    "seed", RANDOM_SEED
+            );
+
+            PMF_PARAMS = Map.of(
+                    "numFactors", 4,
+                    "numIters", 50,
+                    "gamma", 0.015,
+                    "lambda", 0.1,
+                    "seed", RANDOM_SEED
+            );
+
+            DEEPMF_MAE = 0.7925031240310939;
+            DEEPMF_COVERAGE = 1.0;
+            DEEPMF_PRECISION = 0.5600725680700493;
+            DEEPMF_RECALL = 0.5118581334702241;
+
+            NCF_MAE = 0.6305451755110952;
+            NCF_COVERAGE = 1.0;
+            NCF_PRECISION = 0.6817910119547401;
+            NCF_RECALL = 0.6566600164459108;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-//    // Uncomment this for FilmTrust
-//    static {
-//        try {
-//            DATAMODEL = BenchmarkDataModels.FilmTrust();
-//            RATINGS = new double[]{0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0};
-//            LIKE_THRESHOLD = 3.5;
-//
-//            EXPORT_PREFIX = "ft";
-//
-//            DIRMF_PARAMS = Map.of(
-//                    "numFactors", 6,
-//                    "numIters", 100,
-//                    "learningRate", 0.01,
-//                    "regularization", 0.01,
-//                    "beta", 2d,
-//                    "ratings", RATINGS,
-//                    "seed", RANDOM_SEED
-//                    );
-//
-//            BEMF_PARAMS = Map.of(
-//                    "numFactors", 2,
-//                    "numIters", 75,
-//                    "learningRate", 0.02,
-//                    "regularization", 0.06,
-//                    "ratings", RATINGS,
-//                    "seed", RANDOM_SEED
-//            );
-//
-//            PMF_PARAMS = Map.of(
-//                    "numFactors", 4,
-//                    "numIters", 50,
-//                    "gamma", 0.015,
-//                    "lambda", 0.1,
-//                    "seed", RANDOM_SEED
-//            );
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-
 //    // Uncomment this for MyAnimeList
-//    static {
-//        try {
-//            DATAMODEL = BenchmarkDataModels.MyAnimeList();
-//            RATINGS = new double[]{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
-//            LIKE_THRESHOLD = 7.0;
-//
-//            EXPORT_PREFIX = "anime";
-//
-//
-//            DIRMF_PARAMS = Map.of(
-//                    "numFactors", 6,
-//                    "numIters", 100,
-//                    "learningRate", 0.01,
-//                    "regularization", 0.01,
-//                    "beta", 2d,
-//                    "ratings", RATINGS,
-//                    "seed", RANDOM_SEED
-//                    );
-//
-//            BEMF_PARAMS = Map.of(
-//                    "numFactors", 4,
-//                    "numIters", 100,
-//                    "learningRate", 0.004,
-//                    "regularization", 0.1,
-//                    "ratings", RATINGS,
-//                    "seed", RANDOM_SEED
-//            );
-//
-//            PMF_PARAMS = Map.of(
-//                    "numFactors", 10,
-//                    "numIters", 50,
-//                    "gamma", 0.005,
-//                    "lambda", 0.085,
-//                    "seed", RANDOM_SEED
-//            );
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//
-//    // Uncomment this for Netflix
-//    static {
-//        try {
-//            DATAMODEL = BenchmarkDataModels.MyAnimeList();
-//            RATINGS = new double[]{1.0, 2.0, 3.0, 4.0, 5.0};
-//            LIKE_THRESHOLD = 4.0;
-//
-//            EXPORT_PREFIX = "netflix";
-//
-//
-//            DIRMF_PARAMS = Map.of(
-//                    "numFactors", 6,
-//                    "numIters", 100,
-//                    "learningRate", 0.01,
-//                    "regularization", 0.01,
-//                    "beta", 2d,
-//                    "ratings", RATINGS,
-//                    "seed", RANDOM_SEED
-//                    );
-//
-//            BEMF_PARAMS = Map.of(
-//                    "numFactors", 4,
-//                    "numIters", 100,
-//                    "learningRate", 0.004,
-//                    "regularization", 0.1,
-//                    "ratings", RATINGS,
-//                    "seed", RANDOM_SEED
-//            );
-//
-//            PMF_PARAMS = Map.of(
-//                    "numFactors", 10,
-//                    "numIters", 50,
-//                    "gamma", 0.005,
-//                    "lambda", 0.085,
-//                    "seed", RANDOM_SEED
-//            );
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+/*    static {
+        try {
+            DATAMODEL = BenchmarkDataModels.MyAnimeList();
+            RATINGS = new double[]{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
+            LIKE_THRESHOLD = 7.0;
+
+            EXPORT_PREFIX = "myanimelist";
+
+
+            DIRMF_PARAMS = Map.of(
+                    "numFactors", 6,
+                    "numIters", 100,
+                    "learningRate", 0.01,
+                    "regularization", 0.01,
+                    "beta", 2d,
+                    "ratings", RATINGS,
+                    "seed", RANDOM_SEED
+                    );
+
+            BEMF_PARAMS = Map.of(
+                    "numFactors", 4,
+                    "numIters", 100,
+                    "learningRate", 0.004,
+                    "regularization", 0.1,
+                    "ratings", RATINGS,
+                    "seed", RANDOM_SEED
+            );
+
+            PMF_PARAMS = Map.of(
+                    "numFactors", 10,
+                    "numIters", 50,
+                    "gamma", 0.005,
+                    "lambda", 0.085,
+                    "seed", RANDOM_SEED
+            );
+
+            DEEPMF_MAE = 0;
+            DEEPMF_COVERAGE = 0;
+            DEEPMF_PRECISION = 0;
+            DEEPMF_RECALL = 0;
+
+            NCF_MAE = 0;
+            NCF_COVERAGE = 0;
+            NCF_PRECISION = 0;
+            NCF_RECALL = 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
+
+      // Uncomment this for Netflix
+/*    static {
+        try {
+            DATAMODEL = BenchmarkDataModels.MyAnimeList();
+            RATINGS = new double[]{1.0, 2.0, 3.0, 4.0, 5.0};
+            LIKE_THRESHOLD = 4.0;
+
+            EXPORT_PREFIX = "netflix";
+
+
+            DIRMF_PARAMS = Map.of(
+                    "numFactors", 6,
+                    "numIters", 100,
+                    "learningRate", 0.01,
+                    "regularization", 0.01,
+                    "beta", 2d,
+                    "ratings", RATINGS,
+                    "seed", RANDOM_SEED
+                    );
+
+            BEMF_PARAMS = Map.of(
+                    "numFactors", 4,
+                    "numIters", 100,
+                    "learningRate", 0.004,
+                    "regularization", 0.1,
+                    "ratings", RATINGS,
+                    "seed", RANDOM_SEED
+            );
+
+            PMF_PARAMS = Map.of(
+                    "numFactors", 10,
+                    "numIters", 50,
+                    "gamma", 0.005,
+                    "lambda", 0.085,
+                    "seed", RANDOM_SEED
+            );
+
+            DEEPMF_MAE = 0;
+            DEEPMF_COVERAGE = 0;
+            DEEPMF_PRECISION = 0;
+            DEEPMF_RECALL = 0;
+
+            NCF_MAE = 0;
+            NCF_COVERAGE = 0;
+            NCF_PRECISION = 0;
+            NCF_RECALL = 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
 }

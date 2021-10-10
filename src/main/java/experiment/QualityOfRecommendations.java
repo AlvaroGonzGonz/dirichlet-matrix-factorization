@@ -76,6 +76,16 @@ public class QualityOfRecommendations {
         recallPlot.addSeries("PMF", recalScore);
 
 
+        // Evaluate DeepMF (python)
+        precisionPlot.addSeries("DeepMF", DEEPMF_PRECISION);
+        recallPlot.addSeries("DeepMF", DEEPMF_RECALL);
+
+
+        // Evaluate NCF (python)
+        precisionPlot.addSeries("NCF", NCF_PRECISION);
+        recallPlot.addSeries("NCF", NCF_RECALL);
+
+
 
         // Print results
         PlotSettings.setWidth(PLOT_WIDTH);

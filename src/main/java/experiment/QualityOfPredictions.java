@@ -45,7 +45,7 @@ public class QualityOfPredictions {
 
         for (double threshold : RELIABILITY_THRESHOLD) {
             maePlot.setValue("DirMF", threshold, Prediction.reliableMae(dirmf, threshold));
-            coveragePlot.setValue("DirMF", threshold, Prediction.reliableCoverage(bemf, threshold));
+            coveragePlot.setValue("DirMF", threshold, Prediction.reliableCoverage(dirmf, threshold));
         }
 
 
@@ -55,6 +55,17 @@ public class QualityOfPredictions {
 
         maePlot.addSeries("PMF", Prediction.mae(pmf));
         coveragePlot.addSeries("PMF", 1.0);
+
+
+        // Evaluate DeepMF (python)
+        maePlot.addSeries("DeepMF", DEEPMF_MAE);
+        coveragePlot.addSeries("DeepMF", DEEPMF_COVERAGE);
+
+
+        // Evaluate NCF (python)
+        maePlot.addSeries("NCF", NCF_MAE);
+        coveragePlot.addSeries("NCF", NCF_COVERAGE);
+
 
 
         // Print results
