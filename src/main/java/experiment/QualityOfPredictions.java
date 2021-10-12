@@ -23,19 +23,6 @@ public class QualityOfPredictions {
         LinePlot coveragePlot = new LinePlot(RELIABILITY_THRESHOLD, "Prediction reliability", "Coverage");
 
 
-        // Evaluate BeMF Recommender
-        BeMF bemf = new BeMF(datamodel, BEMF_PARAMS);
-        bemf.fit();
-
-        maePlot.addSeries("BeMF");
-        coveragePlot.addSeries("BeMF");
-
-        for (double threshold : RELIABILITY_THRESHOLD) {
-            maePlot.setValue("BeMF", threshold, Prediction.reliableMae(bemf, threshold));
-            coveragePlot.setValue("BeMF", threshold, Prediction.reliableCoverage(bemf, threshold));
-        }
-
-
         // Evaluate DirMF Recommender
         DirMF dirmf = new DirMF(datamodel, DIRMF_PARAMS);
         dirmf.fit();
@@ -46,6 +33,19 @@ public class QualityOfPredictions {
         for (double threshold : RELIABILITY_THRESHOLD) {
             maePlot.setValue("DirMF", threshold, Prediction.reliableMae(dirmf, threshold));
             coveragePlot.setValue("DirMF", threshold, Prediction.reliableCoverage(dirmf, threshold));
+        }
+
+
+        // Evaluate BeMF Recommender
+        BeMF bemf = new BeMF(datamodel, BEMF_PARAMS);
+        bemf.fit();
+
+        maePlot.addSeries("BeMF");
+        coveragePlot.addSeries("BeMF");
+
+        for (double threshold : RELIABILITY_THRESHOLD) {
+            maePlot.setValue("BeMF", threshold, Prediction.reliableMae(bemf, threshold));
+            coveragePlot.setValue("BeMF", threshold, Prediction.reliableCoverage(bemf, threshold));
         }
 
 

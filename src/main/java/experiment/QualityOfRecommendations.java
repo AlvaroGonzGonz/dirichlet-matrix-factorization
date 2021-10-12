@@ -27,24 +27,6 @@ public class QualityOfRecommendations {
         LinePlot recallPlot = new LinePlot(RELIABILITY_THRESHOLD, "Recommendation reliability", "Recall");
 
 
-        // Evaluate BeMF Recommender
-        BeMF bemf = new BeMF(datamodel, BEMF_PARAMS);
-        bemf.fit();
-
-        precisionPlot.addSeries("BeMF");
-        recallPlot.addSeries("BeMF");
-
-        for (double threshold : RELIABILITY_THRESHOLD) {
-            ReliablePrecision rPrecision = new ReliablePrecision(bemf, NUM_RECOMMENDATIONS, threshold, LIKE_THRESHOLD);
-            double rPrecisionScore = rPrecision.getScore();
-            precisionPlot.setValue("BeMF", threshold, rPrecisionScore);
-
-            ReliableRecall rRecall = new ReliableRecall(bemf, NUM_RECOMMENDATIONS, threshold, LIKE_THRESHOLD);
-            double rRecallScore = rRecall.getScore();
-            recallPlot.setValue("BeMF", threshold, rRecallScore);
-        }
-
-
         //Evaluate DirMF Recommender
         DirMF dirmf = new DirMF(datamodel, DIRMF_PARAMS);
         dirmf.fit();
@@ -60,6 +42,24 @@ public class QualityOfRecommendations {
             ReliableRecall rRecall = new ReliableRecall(dirmf, NUM_RECOMMENDATIONS, threshold, LIKE_THRESHOLD);
             double rRecallScore = rRecall.getScore();
             recallPlot.setValue("DirMF", threshold, rRecallScore);
+        }
+
+
+        // Evaluate BeMF Recommender
+        BeMF bemf = new BeMF(datamodel, BEMF_PARAMS);
+        bemf.fit();
+
+        precisionPlot.addSeries("BeMF");
+        recallPlot.addSeries("BeMF");
+
+        for (double threshold : RELIABILITY_THRESHOLD) {
+            ReliablePrecision rPrecision = new ReliablePrecision(bemf, NUM_RECOMMENDATIONS, threshold, LIKE_THRESHOLD);
+            double rPrecisionScore = rPrecision.getScore();
+            precisionPlot.setValue("BeMF", threshold, rPrecisionScore);
+
+            ReliableRecall rRecall = new ReliableRecall(bemf, NUM_RECOMMENDATIONS, threshold, LIKE_THRESHOLD);
+            double rRecallScore = rRecall.getScore();
+            recallPlot.setValue("BeMF", threshold, rRecallScore);
         }
 
 
