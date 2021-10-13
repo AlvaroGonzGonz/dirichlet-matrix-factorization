@@ -223,14 +223,13 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
 
                 for (int s = 0; s < ratings.length; s++) {
                     double r_ui = user.getRatingAt(pos) == ratings[s]
-                            ? Math.exp(beta * user.getRatingAt(pos)) / (ratings.length + Math.exp(beta * user.getRatingAt(pos)))
-                            : 1 / (ratings.length + Math.exp(beta * user.getRatingAt(pos)));
+                            ? Math.exp(beta * user.getRatingAt(pos)) / (ratings.length - 1 + Math.exp(beta * user.getRatingAt(pos)))
+                            : 1 / (ratings.length - 1 + Math.exp(beta * user.getRatingAt(pos)));
 
                     double dot = Maths.dotProduct(P[s][userIndex], Q[s][itemIndex]);
                     double logit = Maths.logistic(dot);
 
                     for (int k = 0; k < numFactors; k++) {
-                        //double gradient = Q[itemIndex][s][k] * logit * (1 - logit) * (Math.log(r_ui) - Gamma.digamma(logit) + Gamma.digamma(sum));
                         double gradient = Q[s][itemIndex][k] * logit * (1 - logit) * (Gamma.digamma(logit) - Gamma.digamma(sum) - Math.log(r_ui));
                         P[s][userIndex][k] -= learningRate * (gradient + regularization * P[s][userIndex][k]);
                     }
@@ -265,14 +264,13 @@ public class DirMF extends Recommender implements PredictionReliabilityRecommend
 
                 for (int s = 0; s < ratings.length; s++) {
                     double r_ui = item.getRatingAt(pos) == ratings[s]
-                            ? Math.exp(beta * item.getRatingAt(pos)) / (ratings.length + Math.exp(beta * item.getRatingAt(pos)))
-                            : 1 / (ratings.length + Math.exp(beta * item.getRatingAt(pos)));
+                            ? Math.exp(beta * item.getRatingAt(pos)) / (ratings.length - 1 + Math.exp(beta * item.getRatingAt(pos)))
+                            : 1 / (ratings.length - 1 + Math.exp(beta * item.getRatingAt(pos)));
 
                     double dot = Maths.dotProduct(P[s][userIndex], Q[s][itemIndex]);
                     double logit = Maths.logistic(dot);
 
                     for (int k = 0; k < numFactors; k++) {
-                        //double gradient = P[userIndex][s][k] * logit * (1 - logit) * (Math.log(r_ui) - Gamma.digamma(logit) + Gamma.digamma(sum));
                         double gradient = P[s][userIndex][k] * logit * (1 - logit) * (Gamma.digamma(logit) - Gamma.digamma(sum) - Math.log(r_ui));
                         Q[s][itemIndex][k] -= learningRate * (gradient + regularization * Q[s][itemIndex][k]);
                     }
