@@ -187,7 +187,7 @@ public class Settings {
             DEEPMF_RECALL = 0.43146685673147717;
 
             NCF_MAE = 0.901127891111204;
-            NCF_COVERAGE = 0;
+            NCF_COVERAGE = 1.0;
             NCF_PRECISION = 0.74430261807196;
             NCF_RECALL = 0.4114008594284523;
 
@@ -211,7 +211,7 @@ public class Settings {
                     "numIters", 100,
                     "learningRate", 0.01,
                     "regularization", 0.01,
-                    "beta", 2d,
+                    "beta", 1d,
                     "ratings", RATINGS,
                     "seed", RANDOM_SEED
                     );
