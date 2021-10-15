@@ -93,7 +93,7 @@ public class Settings {
     }*/
 
     // Uncomment this for FilmTrust
-/*    static {
+    static {
         try {
             DATAMODEL = BenchmarkDataModels.FilmTrust();
             RATINGS = new double[]{0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0};
@@ -141,11 +141,11 @@ public class Settings {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }*/
+    }
 
 
       // Uncomment this for MyAnimeList
-    static {
+/*    static {
         try {
             DATAMODEL = BenchmarkDataModels.MyAnimeList();
             RATINGS = new double[]{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
@@ -194,7 +194,7 @@ public class Settings {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
       // Uncomment this for Netflix
 /*    static {
@@ -233,15 +233,15 @@ public class Settings {
                     "seed", RANDOM_SEED
             );
 
-            DEEPMF_MAE = 0;
-            DEEPMF_COVERAGE = 0;
-            DEEPMF_PRECISION = 0;
-            DEEPMF_RECALL = 0;
+            DEEPMF_MAE = 0.6861803149776209;
+            DEEPMF_COVERAGE = 1.0;
+            DEEPMF_PRECISION = 0.600562101316028;
+            DEEPMF_RECALL = 0.29922371652744606;
 
-            NCF_MAE = 0;
-            NCF_COVERAGE = 0;
-            NCF_PRECISION = 0;
-            NCF_RECALL = 0;
+            NCF_MAE = 0.6882784305068139;
+            NCF_COVERAGE = 1.0;
+            NCF_PRECISION = 0.6401984761614494;
+            NCF_RECALL = 0.3079389919867263;
 
         } catch (Exception e) {
             e.printStackTrace();
