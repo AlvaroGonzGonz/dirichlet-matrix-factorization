@@ -1,8 +1,7 @@
-# Project exclude paths
-/out/
-/target/
-/.idea/
-/META-INF/
-
-# Project exclude files
-*.iml
+/java/out/
+/java/target/
+/java/.idea/
+/java/META-INF/
+/java/*.iml
+/results
+/data
