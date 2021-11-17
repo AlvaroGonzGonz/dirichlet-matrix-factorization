@@ -1,12 +1,12 @@
+package es.upm.etsisi.knodis.dirmf;
+
 import es.upm.etsisi.cf4j.data.*;
-import experiment.Settings;
+import es.upm.etsisi.knodis.dirmf.experiment.Settings;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.util.Set;
 
 public class ExportTrainTestSplit {
 
